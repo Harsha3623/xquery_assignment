@@ -1,0 +1,99 @@
+<export><workspace name="Assignment"><query name="Inserting into DB" focus="false" listorder="1" taborder="1" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:loading data to the variable:)
+let $root := 
+(&lt;library&gt;
+  &lt;book&gt;
+    &lt;title&gt;Java&lt;/title&gt;
+    &lt;author&gt;Herbert Schildt&lt;/author&gt;
+    &lt;year&gt;2024&lt;/year&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;title&gt;XQuery&lt;/title&gt;
+    &lt;author&gt;Michael Brundage&lt;/author&gt;
+    &lt;year&gt;2025&lt;/year&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;title&gt;XML&lt;/title&gt;
+    &lt;author&gt;Steven Holzner&lt;/author&gt;
+    &lt;year&gt;2023&lt;/year&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;title&gt;Python&lt;/title&gt;
+    &lt;author&gt;Eric Matthes&lt;/author&gt;
+    &lt;year&gt;2024&lt;/year&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;title&gt;C++&lt;/title&gt;
+    &lt;author&gt;Bjarne Stroustrup&lt;/author&gt;
+    &lt;year&gt;2025&lt;/year&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;title&gt;HTML&lt;/title&gt;
+    &lt;author&gt;Ben Frain&lt;/author&gt;
+    &lt;year&gt;2021&lt;/year&gt;
+  &lt;/book&gt;
+&lt;/library&gt;)
+
+(:Inserting into the db using the xdmp:document-insert:)
+return xdmp:document-insert("/integration/Assignment_001",
+
+$root, (),
+("Assignment","UCBOS","Books"))</query><query name="Retrieving all books" focus="false" listorder="2" taborder="2" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:Loading data to the variable:)
+let $document := fn:doc("/integration/Assignment_001")/library/book
+
+return &lt;AllBooks&gt;{$document}&lt;/AllBooks&gt;
+</query><query name="Retrieve All unique authors" focus="false" listorder="3" taborder="3" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:root element:)
+&lt;UniqueAuthor&gt;{
+
+(:loading data into variable by author name and filtering to unique constarint:)
+let $document := fn:distinct-values(fn:doc("/integration/Assignment_001")/library/book/author)
+
+for $author in $document
+return &lt;AuthorName&gt;{$author}&lt;/AuthorName&gt;
+
+}
+&lt;/UniqueAuthor&gt;</query><query name="Count of books written by author" focus="false" listorder="4" taborder="4" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+(:loading:)
+let $document := fn:doc("/integration/Assignment_001")/library/book
+(:loading authors :)
+let $authors :=  fn:distinct-values($document/author)
+
+(:iteriating using for loop and getting the count of books written by them:)
+for $author in $authors 
+let $count := count($document[author = $author])
+
+return &lt;AuthorBooks&gt;&lt;author&gt;{$author}&lt;/author&gt;
+        &lt;BookCount&gt;{$count}&lt;/BookCount&gt;&lt;/AuthorBooks&gt;</query><query name="Retrieve the books by year" focus="false" listorder="5" taborder="5" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+(:loading:)
+let $document := fn:doc("/integration/Assignment_001")/library/book
+
+(:iterating and getting the books by year i.e books year mnore than 2023:)
+for $book in $document
+where $book/year gt 2023
+return &lt;books&gt;{$book}&lt;/books&gt;</query><query name="inserting new value " focus="true" listorder="6" taborder="6" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:loading root uri:)
+let $document := fn:doc("/integration/Assignment_001")/library
+
+(:writing data to the new variable:)
+let $update := (&lt;book&gt;
+                &lt;title&gt;Docker&lt;/title&gt;
+                  &lt;author&gt;Herbert&lt;/author&gt;
+                      &lt;year&gt;2003&lt;/year&gt;
+                          &lt;/book&gt;)
+                          
+return xdmp:node-insert-child($document, $update),"Inersted a new node to the root element: library updated "</query><query name="deleting the node by year" focus="false" listorder="7" taborder="7" active="false" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(: deleting the node:)
+let $document := fn:doc("/integration/Assignment_001")/library/book
+
+let $currentyear := year-from-date(current-date())
+
+for $book in $document
+where ($book/year) lt ( $currentyear - 3)
+return (xdmp:node-delete($book),"deleted book",$book/title)</query></workspace></export>
