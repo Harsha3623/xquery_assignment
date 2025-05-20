@@ -1,0 +1,103 @@
+<export><workspace name="Assignment 3"><query name="Saving Specialty Retailer Item collections" focus="false" listorder="1" taborder="1" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+
+let $doc1 := &lt;root&gt;
+                &lt;SpecialtyRetailerItem&gt;
+                      &lt;ItemUPC&gt;UCBOS1&lt;/ItemUPC&gt;
+                      &lt;ItemNumber&gt;SKUA&lt;/ItemNumber&gt;
+                      &lt;AlternateItemNo&gt;SKUB&lt;/AlternateItemNo&gt;
+                &lt;/SpecialtyRetailerItem&gt;
+            &lt;/root&gt;
+            
+let $doc1_uri := "/SpecialtyRetailerItem/Document1"
+
+
+
+let $doc2 := &lt;root&gt;
+                &lt;SpecialtyRetailerItem&gt;
+                      &lt;ItemUPC&gt;UCBOS2&lt;/ItemUPC&gt;
+                      &lt;ItemNumber&gt;SKUB&lt;/ItemNumber&gt;
+                      
+                &lt;/SpecialtyRetailerItem&gt;
+            &lt;/root&gt;
+            
+let $doc2_uri := "/SpecialtyRetailerItem/Document2"
+
+
+
+return (
+        xdmp:document-insert($doc1_uri, $doc1, (), ("Specialty Retailer Item")),
+        xdmp:document-insert($doc2_uri, $doc2,(), ("Specialty Retailer Item")),
+        "Document inserted to collection Speciality Retailer Item"
+        )
+
+</query><query name="Saving Enterprise inventory collection" focus="false" listorder="2" taborder="2" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+let $doc1 := &lt;Inventory&gt;
+                &lt;EnterpriseInventory&gt;
+                    &lt;ItemNumber&gt;SKUA&lt;/ItemNumber&gt;
+                    &lt;Quantity&gt;10&lt;/Quantity&gt;
+                    &lt;AllocationStatus&gt;Available&lt;/AllocationStatus&gt;
+                &lt;/EnterpriseInventory&gt;
+            &lt;/Inventory&gt;
+            
+let $doc1_uri := "/EnterpriseInventory/Document1"
+
+
+
+let $doc2 := &lt;Inventory&gt;
+                &lt;EnterpriseInventory&gt;
+                      &lt;ItemNumber&gt;SKUB&lt;/ItemNumber&gt;
+                      &lt;Quantity&gt;30&lt;/Quantity&gt;
+                      &lt;AllocationStatus&gt;Available&lt;/AllocationStatus&gt;
+                &lt;/EnterpriseInventory&gt;
+              &lt;/Inventory&gt;
+              
+let $doc2_uri := "/EnterpriseInventory/Document2"
+
+
+return (
+        xdmp:document-insert($doc1_uri, $doc1, (), ("Enterprise Inventory")),
+        xdmp:document-insert($doc2_uri, $doc2,(), ("Enterprise Inventory")),
+        "Document inserted to collection Enterprise Inventory"
+        )
+
+</query><query name="Query result in xml" focus="true" listorder="3" taborder="3" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:function o retrive the quantity of the item:)
+declare function local:getItemQuantity($itmNumber as xs:string) as xs:integer* {
+    for $item in collection("Enterprise Inventory")
+    where $item//AllocationStatus eq "Available" and $item//ItemNumber eq $itmNumber
+    return $item//Quantity
+};
+
+(:function to retreive the item status:)
+declare function local:getItemStatus($itmNumber as xs:string) as xs:string* {
+    for $item in collection("Enterprise Inventory")
+    where $item//ItemNumber eq $itmNumber
+    return $item//AllocationStatus/text()
+};
+
+(:iterating through all the collections:)
+for $retailer in collection("Specialty Retailer Item")
+
+let $masterId := $retailer//ItemUPC
+let $itemNumber := $retailer//ItemNumber
+let $alternateItemNumber := $retailer//AlternateItemNo
+
+let $sumItems := sum(local:getItemQuantity($itemNumber))
+let $sumAlternateItems := sum(local:getItemQuantity($alternateItemNumber))
+let $totalQuantity := $sumItems + $sumAlternateItems
+
+return (&lt;EnterpriseInventoryDashboard&gt;
+
+        &lt;GlobalMasterID&gt;{$masterId/text()}&lt;/GlobalMasterID&gt;
+        &lt;ItemNumber&gt;{$itemNumber/text()}&lt;/ItemNumber&gt;
+        &lt;AlternateItemNumber&gt;{$alternateItemNumber/text()}&lt;/AlternateItemNumber&gt;
+        &lt;TotalQuantity&gt;{$totalQuantity}&lt;/TotalQuantity&gt;
+        &lt;Status&gt;{local:getItemStatus($itemNumber)}&lt;/Status&gt;
+        
+      &lt;/EnterpriseInventoryDashboard&gt;
+      )</query></workspace></export>
