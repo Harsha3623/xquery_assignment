@@ -1,0 +1,289 @@
+<export><workspace name="Assignment 2"><query name="Inserting data to database" focus="false" listorder="1" taborder="1" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:crating a variable which holds 25 documents :)
+let $document := (&lt;library&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Effective Java&lt;/bookname&gt;
+                    &lt;author&gt;JOSHUA BLOCH&lt;/author&gt;
+                    &lt;year&gt;2018&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;The Complete Referenece Java&lt;/bookname&gt;
+                    &lt;author&gt;Herbert Schildt&lt;/author&gt;
+                    &lt;year&gt;2018&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Head First Java&lt;/bookname&gt;
+                    &lt;author&gt;Kathy Sierra&lt;/author&gt;
+                    &lt;year&gt;2005&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Java concurrency in practice&lt;/bookname&gt;
+                    &lt;author&gt;Brian Goetz&lt;/author&gt;
+                    &lt;year&gt;2006&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Core Java Volume-1 Fundamentals&lt;/bookname&gt;
+                    &lt;author&gt;Cay S Horstmann&lt;/author&gt;
+                    &lt;year&gt;2022&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;SQL in 10 minutes&lt;/bookname&gt;
+                    &lt;author&gt;Ben Forta&lt;/author&gt;
+                    &lt;year&gt;2019&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;LEarning SQL&lt;/bookname&gt;
+                    &lt;author&gt;Alan Beaulieu&lt;/author&gt;
+                    &lt;year&gt;2020&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;SQL for smarties: advanced sql&lt;/bookname&gt;
+                    &lt;author&gt;Joe Celko&lt;/author&gt;
+                    &lt;year&gt;2005&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;SQL performance explained&lt;/bookname&gt;
+                    &lt;author&gt;Markus Winand&lt;/author&gt;
+                    &lt;year&gt;2012&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;The Complete sql reference&lt;/bookname&gt;
+                    &lt;author&gt;James R. Groff, Paul N. Weinberg&lt;/author&gt;
+                    &lt;year&gt;2011&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Automate the boring stuff with python&lt;/bookname&gt;
+                    &lt;author&gt;Al Sweigart&lt;/author&gt;
+                    &lt;year&gt;2019&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Python crash course&lt;/bookname&gt;
+                    &lt;author&gt;Eric Matthes&lt;/author&gt;
+                    &lt;year&gt;2019&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Fluent Python&lt;/bookname&gt;
+                    &lt;author&gt;Luciano Ramalho&lt;/author&gt;
+                    &lt;year&gt;2022&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Effective Python: 90 Specific Ways to Write Better Python&lt;/bookname&gt;
+                    &lt;author&gt;Brett Slatkin&lt;/author&gt;
+                    &lt;year&gt;2019&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Python Cookbook&lt;/bookname&gt;
+                    &lt;author&gt;David Beazley&lt;/author&gt;
+                    &lt;year&gt;2013&lt;/year&gt;
+                  &lt;/book&gt; 
+                  &lt;book&gt;
+                    &lt;bookname&gt;Docker Deep Dive&lt;/bookname&gt;
+                    &lt;author&gt;Nigel Poulton&lt;/author&gt;
+                    &lt;year&gt;2023&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Docker In Action&lt;/bookname&gt;
+                    &lt;author&gt;Jeff Nickoloff&lt;/author&gt;
+                    &lt;year&gt;2019&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Using Docker&lt;/bookname&gt;
+                    &lt;author&gt;Adrian Group&lt;/author&gt;
+                    &lt;year&gt;2015&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;The Docker Book: Containerization is the New Virtualization&lt;/bookname&gt;
+                    &lt;author&gt;James Turnbull&lt;/author&gt;
+                    &lt;year&gt;2014&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Learn Docker – Fundamentals of Docker 19.x&lt;/bookname&gt;
+                    &lt;author&gt;Gabriel N. Schenker&lt;/author&gt;
+                    &lt;year&gt;2020&lt;/year&gt;
+                  &lt;/book&gt; 
+                  &lt;book&gt;
+                    &lt;bookname&gt;Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow&lt;/bookname&gt;
+                    &lt;author&gt;Aurelien Gerop&lt;/author&gt;
+                    &lt;year&gt;2022&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Pattern Recognition and Machine Learning&lt;/bookname&gt;
+                    &lt;author&gt;Christopher M. Bishop&lt;/author&gt;
+                    &lt;year&gt;2006&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Artificial Intelligence: A Modern Approach&lt;/bookname&gt;
+                    &lt;author&gt;Stuart Russell &lt;/author&gt;
+                    &lt;year&gt;2020&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Deep Learning&lt;/bookname&gt;
+                    &lt;author&gt;Ian Goodfellow&lt;/author&gt;
+                    &lt;year&gt;2016&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;book&gt;
+                    &lt;bookname&gt;Machine Learning Yearning&lt;/bookname&gt;
+                    &lt;author&gt;Andrew Ng&lt;/author&gt;
+                    &lt;year&gt;2018&lt;/year&gt;
+                  &lt;/book&gt;
+                  &lt;/library&gt;)
+                  
+(:getting the count of book documents presnet in variable:)
+let $count := fn:count($document//book)   
+
+(:output string value:)
+let $result := ("Document Inserted: "||$count||" document length")
+
+return (xdmp:document-insert("/XML/Library/Book", $document, (), ("UCBOS","BOOKS")),$result)
+                  
+                  
+                  </query><query name="changing the uri name" focus="false" listorder="2" taborder="2" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+let $oldUri := "/XML/Library/Book"
+(:creating a new uri:)
+let $newUri := "/UCBOS/Library/Book"
+
+let $document := fn:doc($oldUri)
+
+(:output string:)
+let $result := "The uri is changed from "||$oldUri||" to "||$newUri
+let $collections := xdmp:document-get-collections($oldUri)
+
+return (
+        xdmp:document-insert($newUri,$document, (), $collections),
+        xdmp:document-delete($oldUri),
+        $result)</query><query name="Accessing data from different db" focus="false" listorder="3" taborder="4" active="true" database="12239865429437912009" server="10508786613279711292" database-name="Schemas" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+let $database := xdmp:database("Documents")
+
+return xdmp:eval("doc('/UCBOS/Library/Book')", 
+                  (),
+                  &lt;options xmlns="xdmp:eval"&gt;
+		                  &lt;database&gt;{$database}&lt;/database&gt;
+		              &lt;/options&gt;)
+(:=&gt; The '/UCBOS/Library/Book' document from the
+   Documents database.:)</query><query name="adding price node to the book node" focus="false" listorder="4" taborder="3" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+import module namespace admin = "http://marklogic.com/xdmp/admin"
+		  at "/MarkLogic/admin.xqy";
+      
+      
+(:defining a custom function which would return random value:)
+
+declare function local:randomValue() as xs:integer{
+    let $max := 2000
+    let $min:= 500
+    return $min +xdmp:random(1500)
+};
+
+
+let $document := fn:doc("/UCBOS/Library/Book")/library/book
+
+(:writing a new node to the document:)
+for $i in $document
+return xdmp:node-insert-child($i, &lt;price&gt;{local:randomValue()}&lt;/price&gt;)
+
+
+
+</query><query name="converting Author name to Lower Case" focus="false" listorder="5" taborder="3" active="false" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+let $document := fn:doc("/UCBOS/Library/Book")/library/book/author
+
+(:replacing the node by using the lower case author name:)
+for $data in $document
+let $lowerAuthor := fn:lower-case($data/text())
+
+return xdmp:node-replace($data, &lt;author&gt;{$lowerAuthor}&lt;/author&gt;)</query><query name="Price range sorting" focus="false" listorder="6" taborder="3" active="false" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+(:function to check the value price range using minimum price and maximum price :)
+declare function local:groupingByPrice(
+                                       $min,
+                                       $max,
+                                       $node as element(library)
+                                                            ) {
+
+      for $book in $node/book
+       where xs:integer($book/price) ge $min and ($book/price) le $max
+        return $book
+};
+
+
+let $doc := fn:doc("/UCBOS/Library/Book")/library
+
+let $min := (500,1001,1501)
+let $max := (1000,1500,2000)
+
+
+let $range1 := local:groupingByPrice($min[1], $max[1], $doc)
+let $range2 := local:groupingByPrice($min[2],$max[2],$doc)
+let $range3 := local:groupingByPrice($min[3],$max[3],$doc)
+
+return (&lt;PriceRange&gt;{
+        element{'PriceBy-'||$min[1]||'-'||$max[1]}{
+            $range1
+        }
+        }
+        &lt;priceBy-500-1000&gt;{$range1}&lt;/priceBy-500-1000&gt;
+        
+        &lt;priceBy-1001-1500&gt;{$range2}&lt;/priceBy-1001-1500&gt;
+        
+        &lt;priceBy-1501-2000&gt;{$range3}&lt;/priceBy-1501-2000&gt;
+        &lt;/PriceRange&gt;)
+</query><query name="author name contains &quot;G&quot; and start with &quot;a&quot; and  &quot;" focus="true" listorder="7" taborder="5" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+let $document := fn:doc("/UCBOS/Library/Book")/library
+
+let $result := for $book in $document/book
+                where $book/year gt 2020 and fn:contains(fn:lower-case($book/author/text()),"g") 
+                                  and fn:starts-with(fn:lower-case($book/author/text()),"a") 
+                                    and fn:ends-with(fn:lower-case($book/author/text()),"p")
+                  return $book
+                 
+return 
+  if (exists($result)) then $result
+  else "No matching data"</query><query name="high value books" focus="false" listorder="8" taborder="3" active="false" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:function to get the high value books:)
+declare function local:getHighPriceBook()  {
+  let $document := fn:doc("/UCBOS/Library/Book")/library
+
+  for $book in $document/book
+  where $book/price gt 1500
+  return $book
+};
+
+(:storing the value to varible for inserting to new uri:)
+let $result:=&lt;HighValueBooks&gt;{local:getHighPriceBook()}&lt;/HighValueBooks&gt;
+
+return xdmp:document-insert("/UCBOS/Library/HighValueBooks", $result)</query><query name="price range sorting in dynamic way" focus="false" listorder="9" taborder="3" active="false" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+(:function to check the value price range using minimum price and maximum price :)
+declare function local:groupingByPrice(
+                                       $min,
+                                       $max,
+                                       $node
+                                             )  {
+
+      for $book in $node/book
+       where xs:integer($book/price) ge $min and ($book/price) le $max
+        return $book
+};
+
+
+let $doc := fn:doc("/UCBOS/Library/Book")/library
+
+let $min := (500,1001,1501)
+let $max := (1000,1500,2000)
+
+(:i means the value and pos means the index value in the sequence min:)
+for $i at $pos in $min
+
+return element {"priceRange"}{
+          element {"PriceBy-"||$min[$pos]||"-"||$max[$pos]}{
+           local:groupingByPrice($min[$pos],$max[$pos],$doc)
+          }
+}
+</query></workspace></export>

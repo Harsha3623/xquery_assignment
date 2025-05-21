@@ -1,0 +1,38 @@
+<export><workspace name="Assignment 4"><query name="Time interval details " focus="true" listorder="1" taborder="1" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+
+(:recursive function to print the Interval duration:)
+declare function local:printInterval($start , $end , $intval, $attVal) {
+
+  if ($start ge $end or $end gt $end_time) then ()
+  
+   else(
+      element {"interval"}{
+      
+      (:Mentioning the attribute value in custom element:)
+      attribute attr {$attVal},
+      
+        (:fornmatting time:)
+        &lt;startdatetime&gt;{format-time($start, " [h]:[m]:[s] [PN]")}&lt;/startdatetime&gt;,
+        &lt;enddatetime&gt;{format-time($end, " [h]:[m]:[s]  [PN]")}&lt;/enddatetime&gt;
+        
+      },if($attVal eq 1) then (
+            local:printInterval($start+$intval+xs:dayTimeDuration("PT01S"), $end+$intval, $intval,$attVal+1)
+            )
+            else(
+            local:printInterval($start+$intval, $end+$intval, $intval,$attVal+1)
+            )
+      )
+};
+
+(:Gloabl variable end date time:)
+declare variable $end_time := xs:time("17:00:00");
+
+
+let $start_time := xs:time("05:00:00")
+
+let $interval := xs:dayTimeDuration("PT30M")
+
+return &lt;IntervalDetails&gt;{ local:printInterval($start_time, $start_time+$interval, $interval,1) }&lt;/IntervalDetails&gt;
+</query></workspace></export>
