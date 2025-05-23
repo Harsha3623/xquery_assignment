@@ -1,0 +1,141 @@
+<export><workspace name="Assignment 4"><query name="Time interval details " focus="false" listorder="1" taborder="1" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+
+(:recursive function to print the Interval duration:)
+declare function local:printInterval($start , $end , $intval, $attVal) {
+
+  if ($start ge $end or $end gt $end_time) then ()
+  
+   else(
+      element {"interval"}{
+      
+      (:Mentioning the attribute value in custom element:)
+      attribute attr {$attVal},
+      
+        (:fornmatting time:)
+        &lt;startdatetime&gt;{format-time($start, " [h]:[m]:[s] [PN]")}&lt;/startdatetime&gt;,
+        &lt;enddatetime&gt;{format-time($end, " [h]:[m]:[s]  [PN]")}&lt;/enddatetime&gt;
+        
+      },if($attVal eq 1) then (
+            local:printInterval($start+$intval+xs:dayTimeDuration("PT01S"), $end+$intval, $intval,$attVal+1)
+            )
+            else(
+            local:printInterval($start+$intval, $end+$intval, $intval,$attVal+1)
+            )
+      )
+};
+
+(:Gloabl variable end date time:)
+declare variable $end_time := xs:time("17:00:10");
+
+
+let $start_time := xs:time("05:59:59")
+
+let $interval := xs:dayTimeDuration("PT1H")
+
+return &lt;IntervalDetails&gt;{ local:printInterval($start_time, $start_time+$interval, $interval,1) }&lt;/IntervalDetails&gt;
+</query><query name="Query 1" focus="true" listorder="2" taborder="2" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+
+(:recursive function to print the Interval duration:)
+declare function local:printInterval($start , $end , $intval, $attVal) {
+
+  if ($start ge $end or $end gt $end_time) then ()
+  
+   else(
+      element {"interval"}{
+      
+      (:Mentioning the attribute value in custom element:)
+      attribute attr {$attVal},
+      
+        (:fornmatting time:)
+        &lt;startdatetime&gt;{format-time($start, " [h]:[m]:[s] [PN]")}&lt;/startdatetime&gt;,
+        &lt;enddatetime&gt;{format-time($end, " [h]:[m]:[s]  [PN]")}&lt;/enddatetime&gt;
+        
+      },if($attVal eq 1) then (
+            local:printInterval($start+$intval+xs:dayTimeDuration("PT01S"), $end+$intval+xs:dayTimeDuration("PT01S"), $intval,$attVal+1)
+            )
+            else(
+            local:printInterval($start+$intval++xs:dayTimeDuration("PT01S"), $end+$intval+xs:dayTimeDuration("PT01S"), $intval,$attVal+1)
+            )
+      )
+};
+
+(:Gloabl variable end date time:)
+declare variable $end_time := xs:time("17:00:00");
+
+
+let $start_time := xs:time("05:00:00")
+
+let $interval := xs:dayTimeDuration("PT29M59S")
+
+return &lt;IntervalDetails&gt;{ local:printInterval($start_time, $start_time+$interval, $interval,1) }&lt;/IntervalDetails&gt;
+</query><query name="ALtered querry for Date Time" focus="false" listorder="3" taborder="3" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+
+(:recursive function to print the Interval duration:)
+declare function local:printInterval($start , $end , $intval, $attVal) {
+
+  if ($start ge $end or  $end gt $end_time ) then ()
+  
+   else(
+      element {"interval"}{
+      
+      (:Mentioning the attribute value in custom element:)
+      attribute attr {$attVal},
+      
+        (:fornmatting time:)
+        &lt;startdatetime&gt;{format-dateTime($start, "  [M01]-[D01]-[Y0001]  [H01]:[m01]:[s01]  ")}&lt;/startdatetime&gt;,
+        &lt;enddatetime&gt;{format-dateTime($end - xs:dayTimeDuration("PT01S"), "  [M01]-[D01]-[Y0001]  [H01]:[m01]:[s01]  ")}&lt;/enddatetime&gt;
+        
+      }, if(($end+$intval gt $end_time) and ( $end ne $end_time)) then (
+      
+          element {"interval"}{
+      
+          (:Mentioning the attribute value in custom element:)
+          attribute attr {$attVal+1},
+      
+            (:fornmatting time:)
+              &lt;startdatetime&gt;{format-dateTime($end , "  [M01]-[D01]-[Y0001]  [H01]:[m01]:[s01]  ")}&lt;/startdatetime&gt;,
+              &lt;enddatetime&gt;{format-dateTime($end_time, "  [M01]-[D01]-[Y0001]  [H01]:[m01]:[s01]  ")}&lt;/enddatetime&gt;
+        
+          }
+          
+      )else(
+            local:printInterval($start+$intval, $end+$intval , $intval,$attVal+1)
+          ) 
+      )
+};
+
+
+
+
+(:Gloabl variable end date time:)
+declare variable $end_time := xs:dateTime("2025-05-22T21:59:59");
+
+
+let $start_time := xs:dateTime("2025-05-21T09:59:59")
+
+let $interval := xs:dayTimeDuration("PT1H")
+
+return &lt;IntervalDetails&gt;{ local:printInterval($start_time, $start_time+$interval, $interval,1) }&lt;/IntervalDetails&gt;
+</query><query name="WeekDay" focus="false" listorder="4" taborder="4" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">(:2025-05-21+05:30:)
+
+let $date := current-date()
+(:let $date := xs:date("2025-05-01"):)
+
+let $startingDayOfWeek := $date - xs:dayTimeDuration("P"||(xdmp:weekday-from-date($date) - 1)||"D")
+
+
+let $endDayOfWeek := $startingDayOfWeek + xs:dayTimeDuration("P6D")
+return &lt;WeekDays&gt;
+          &lt;StartingDate&gt;{format-date($startingDayOfWeek, "[Y0001]-[M01]-[D01]")}&lt;/StartingDate&gt;
+          &lt;EndDate&gt;{format-date($endDayOfWeek, "[Y0001]-[M01]-[D01]")}&lt;/EndDate&gt;
+        &lt;/WeekDays&gt;</query><query name="week start and end date from current date " focus="false" listorder="5" taborder="5" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">        
+let $weekDay := (xdmp:weekday-from-date(fn:current-date())) - 1
+let $weekStartDay := fn:current-date() - xs:dayTimeDuration('P' || $weekDay || 'D')
+let $weekEndDay   := $weekStartDay + xs:dayTimeDuration('P6D')
+return ($weekStartDay, $weekEndDay)</query></workspace></export>
