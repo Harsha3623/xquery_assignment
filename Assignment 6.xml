@@ -1,0 +1,291 @@
+<export><workspace name="Assignment 6"><query name="Converting data types using map" focus="false" listorder="1" taborder="1" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+(:function to convert the data types and return the converted types:)
+declare function local:convertValue($val-original, $val-template) {
+  (:switch statement:)
+    typeswitch ($val-template)
+    
+    case xs:integer return if(xdmp:type($val-original) eq xs:QName("xs:untypedAtomic"))then xs:integer(xs:double($val-original)) else xs:integer($val-original)
+    
+    case xs:double return xs:double($val-original)
+    case xs:string return xs:string($val-original)
+    case xs:boolean return xs:boolean($val-original)
+    case xs:untypedAtomic return xs:string($val-original)
+    
+    
+    case json:array return
+      if (empty($val-template)) then
+        $val-original
+      else
+        let $template-array := json:array-values($val-template)
+        let $template-item := $template-array[1]
+        (:iterating inside array and checking the values:)
+        let $converted := for $item in json:array-values($val-original)
+          return 
+            typeswitch($item)
+            (:map:)
+              case map:map return
+                let $new-map := map:map()
+                let $convert := local:convertDatatypes($item, $template-item, $new-map)
+                return $new-map
+                (:array:)
+              case json:array return
+                local:convertValue($item, $template-item)
+              
+              default return
+                local:convertValue($item, $template-item)
+        return json:to-array($converted)
+    (:map:)
+    case map:map return
+      let $new-map := map:map()
+      let $c := local:convertDatatypes($val-original, $val-template, $new-map)
+      return $new-map
+    
+    default return $val-original
+};
+
+declare function local:convertDatatypes($original, $template, $map) {
+  for $key in map:keys($original)
+  let $val-original := map:get($original, $key)
+  let $val-template := map:get($template, $key)
+  let $converted := 
+    if (exists($val-template)) then
+      local:convertValue($val-original, $val-template)
+    else
+      ($val-original)
+  return map:put($map, $key, $converted)
+};
+
+
+
+let $json1 := '
+{
+  "OrganizationName": "Alwazzan FSIG Snack", 
+  "SourceCode": 8, 
+  "SourceHeaderId": "700",
+  "TransactionTypeId": "42", 
+  "SourceLineId": "7000", 
+  "TransactionUnitOfMeasure": "UNITS", 
+  "SubinventoryCode": "Main Store", 
+  "UseCurrentCostFlag": "true", 
+  "ItemNumber": "RM2001", 
+  "TransactionQuantity": "101", 
+  "TransactionMode": "3",
+  "TransactionHeaderId": "7000", 
+  "TransactionDate": "2024-04-01", 
+  "lots": [
+      {
+        "TransactionQuantity": 101, 
+        "LotExpirationDate": "2026-04-01",
+        "LotNumber": "21223"
+      }
+  ]
+}'
+
+
+
+let $json2 := '
+{
+	"OrganizationName": "Alwazzan FSIG Snack",
+	"SourceCode": "800.9",
+	"SourceHeaderId": 7000,
+	"TransactionTypeId": "42",
+	"SourceLineId": "7000",
+	"TransactionUnitOfMeasure": "UNITS",
+	"SubinventoryCode": "Main Store",
+	"lots": [
+		{
+			"TransactionQuantity": "10",
+			"LotExpirationDate": "2024-03-31",
+			"LotNumber": 2020
+		}
+    
+	],
+	"UseCurrentCostFlag": "true",
+	"ItemNumber": "RM1001",
+	"TransactionQuantity": "10",
+	"TransactionMode": "3",
+	"TransactionHeaderId": "7000",
+	"TransactionDate": "2024-04-01",
+  "double ": 3.14159
+}'
+
+
+(:json1 data :)
+let $parsed := xdmp:from-json-string($json1)
+
+(:sjon2 data:)
+let $original := xdmp:from-json-string($json2)
+
+(:mapper:)
+let $result-map := map:map()
+
+let $converted := local:convertDatatypes($original, $parsed, $result-map)
+return xdmp:to-json($result-map)
+</query><query name="Data type " focus="false" listorder="2" taborder="2" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+
+(:function to convert the data types and return the converted types:)
+declare function local:convertValue($val-original, $val-template) {
+ let $data := xdmp:type($val-template)
+ 
+  return $data
+};
+
+
+declare function local:convertDatatypes($original, $template, $map) {
+  for $key in map:keys($original)
+  let $val-original := map:get($original, $key)
+  let $val-template := map:get($template, $key)
+  let $converted := 
+    if (exists($val-template)) then
+      local:convertValue($val-original, $val-template)
+    else
+      ($val-original)
+  return map:put($map, $key, $converted)
+  
+};
+
+
+
+let $json1 := '
+{
+  "SourceCode": "8"
+}'
+
+
+(:original:)
+let $json2 := '
+{
+	
+	"SourceCode": 800
+}'
+
+
+(:json1 data :)
+let $parsed := xdmp:from-json-string($json1)
+
+(:sjon2 data:)
+let $original := xdmp:from-json-string($json2)
+
+
+(:mapper:)
+let $result-map := map:map()
+
+let $converted := local:convertDatatypes($original, $parsed, $result-map)
+return xdmp:to-json($result-map)
+</query><query name="Converting data types without using the map " focus="true" listorder="3" taborder="3" active="true" database="13674317226963853000" server="10508786613279711292" database-name="Documents" server-name="App-Services" mode="xquery" optimize="1">xquery version "1.0-ml";
+
+(:function to convert values:)
+declare function local:convertValue($val-original, $val-template) {
+  (:switch statement:)
+  typeswitch ($val-template)
+  
+    (:type casting from untyped atomic to double to integer:)
+    case xs:integer return if(xdmp:type($val-original) eq xs:QName("xs:untypedAtomic"))then xs:integer(xs:double($val-original)) else xs:integer($val-original)
+    
+    case xs:double return xs:double($val-original)
+    case xs:string return '"'||xs:string($val-original)||'"'
+    case xs:boolean return xs:boolean($val-original)
+    
+    (: data type for "SourceCode": "8" in json 1 :)
+    case xs:untypedAtomic return '"'||xs:string($val-original)||'"'
+
+    case json:array return
+      if (empty($val-template)) then
+        $val-original
+      else
+        let $template-item := json:array-values($val-template)
+        let $converted := for $item in json:array-values($val-original)
+                           return 
+                            typeswitch($item)
+                                case map:map return local:convertDatatypes($item, $template-item)
+                                 case json:array return local:convertValue($item, $template-item)
+                                  default return local:convertValue($item, $template-item)
+        return "[
+        " || ($converted) || "
+        ]"
+
+    case map:map return local:convertDatatypes($val-original, $val-template)
+
+    default return $val-original
+};
+
+
+declare function local:convertDatatypes($original, $template) {
+  
+    let $pairs := for $key in map:keys($original)
+      let $val-original := map:get($original, $key) (:original -&gt; json 2:)
+      let $val-template := map:get($template, $key)  (:template -&gt; json 1:)
+      
+      let $converted := 
+        if (exists($val-template)) then
+          local:convertValue($val-original, $val-template)
+        else
+          $val-original
+      return '"' || $key || '": ' || $converted
+      
+    return "{
+    " ||string-join($pairs, ", 
+    ") || "
+    }"
+  
+};
+
+let $json1 := '
+{
+  "OrganizationName": "Alwazzan FSIG Snack",
+  "SourceCode": "8",
+  "SourceHeaderId": 7,
+  "TransactionTypeId": "42",
+  "SourceLineId": "7000",
+  "TransactionUnitOfMeasure": "UNITS",
+  "SubinventoryCode": "Main Store",
+  "UseCurrentCostFlag": true,
+  "ItemNumber": "RM2001",
+  "TransactionQuantity": "101",
+  "TransactionMode": "3",
+  "TransactionHeaderId": "7000",
+  "TransactionDate": "2024-04-01",
+  "lots": [
+    {
+      "TransactionQuantity": "101",
+      "LotExpirationDate": "2024-04-01",
+      "LotNumber": 21223
+      
+    }
+  ]
+}'
+
+let $json2 := '
+{
+  "OrganizationName": "Alwazzan FSIG",
+  "SourceCode": "800.8",
+  "SourceHeaderId": "7000",
+  "TransactionTypeId": "42",
+  "SourceLineId": "7000",
+  "TransactionUnitOfMeasure": "UNITS",
+  "SubinventoryCode": "Main Store",
+  "lots": [
+    {
+      "TransactionQuantity": "10",
+      "LotExpirationDate": "2024-03-31",
+      "LotNumber": "20240101"
+    }
+  ],
+  "UseCurrentCostFlag": "true",
+  "ItemNumber": "RM1001",
+  "TransactionQuantity": "10",
+  "TransactionMode": "3",
+  "TransactionHeaderId": "7000",
+  "TransactionDate": "2024-04-01",
+  "double ": 3.14159
+}'
+
+let $template := xdmp:from-json-string($json1)
+let $input := xdmp:from-json-string($json2)
+
+let $converted := local:convertDatatypes($input, $template)
+return  $converted
+</query></workspace></export>
